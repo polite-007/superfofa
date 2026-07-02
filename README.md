@@ -56,7 +56,7 @@ IPv4 主机画像查询，普通 / 详情双模式，仪表盘式布局。
 
 ![批量导出-任务列表](./screenshots/export_1.png)
 
-![批量导出-新建任务](./screenshots/export_2.png)()
+![批量导出-新建任务](./screenshots/export_2.png)
 
 ### 多 Key 管理
 
