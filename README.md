@@ -30,6 +30,40 @@
 
 **Windows**：解压后运行 `superfofa.exe`。若被 SmartScreen 拦截，点击「更多信息」→「仍要运行」。
 
+## 🖼 功能预览
+
+> 截图位于 `screenshots/` 目录，可随版本更新替换。
+
+### 资产搜索
+
+多标签页查询、字段预设、历史记录、分页、端口 / 主机 / 导出联动。
+
+![资产搜索](./screenshots/query.png)
+
+### 主机画像
+
+IPv4 主机画像查询，普通 / 详情双模式，仪表盘式布局。
+
+![主机画像](./screenshots/host.png)
+
+### 聚合统计
+
+按字段聚合统计，快速洞察资产分布。
+
+![聚合统计](./screenshots/aggregate.png)
+
+### 批量导出
+
+多输入源、字段选择、断点续传、暂停 / 恢复 / 重试，XLSX 输出。
+
+![批量导出](./screenshots/export.png)
+
+### 多 Key 管理
+
+多账号管理、顺序 / 单 Key / 多 Key 模式、代理配置、联网检测。
+
+![多 Key 管理](./screenshots/config.png)
+
 ## 🚀 快速开始
 
 1. 打开应用，进入「配置」页
