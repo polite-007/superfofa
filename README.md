@@ -50,13 +50,13 @@ IPv4 主机画像查询，普通 / 详情双模式，仪表盘式布局。
 
 按字段聚合统计，快速洞察资产分布。
 
-![聚合统计](./screenshots/aggregate.png)
-
 ### 批量导出
 
 多输入源、字段选择、断点续传、暂停 / 恢复 / 重试，XLSX 输出。
 
-![批量导出](./screenshots/export.png)
+![批量导出-任务列表](./screenshots/export_1.png)
+
+![批量导出-新建任务](./screenshots/export_2.png)()
 
 ### 多 Key 管理
 
