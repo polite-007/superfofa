@@ -12,7 +12,8 @@
 - **聚合统计**：基于查询结果按字段聚合，多字段并行统计、TopN 可调、占比与计数一目了然，快速洞察资产分布
 - **批量导出**：多语法 / IP / host / domain 输入、字段选择、断点续传、暂停 / 重试、XLSX 输出
 - **多 Key 管理**：多账号管理、顺序轮询 / 单 Key / 多 Key 随机模式、BaseURL / 代理配置、账号联网检测
-- **跨平台**：macOS（Intel / Apple Silicon）、Windows（x64 / ARM64）
+- **自动更新**：应用内检查更新，下载 / 校验 / 安装 / 重启全流程可视化
+- **跨平台**：macOS（Intel / Apple Silicon）、Windows（x64 / ARM64）、Linux（x64 / ARM64）
 - **明暗主题**：手动切换，所有界面自适应
 - **离线友好**：本地 SQLite 持久化任务 / 账号 / 配置 / 查询历史
 
@@ -26,6 +27,8 @@
 | macOS（Intel） | `superfofa-macos-amd64.zip` |
 | Windows（x64） | `superfofa-windows-amd64.zip` |
 | Windows（ARM64） | `superfofa-windows-arm64.zip` |
+| Linux（x64） | `superfofa-linux-amd64.tar.gz` |
+| Linux（ARM64） | `superfofa-linux-arm64.tar.gz` |
 
 **macOS**：解压后把 `superfofa.app` 拖到「应用程序」文件夹。首次打开若被 Gatekeeper 拦截，右键 → 打开 一次即可。
 
