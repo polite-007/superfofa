@@ -26,6 +26,29 @@ super-fofa is built with Wails v2, React, TypeScript, and shadcn/ui. It wraps th
 - **Local persistence** — SQLite stores accounts, configuration, export tasks, and query history locally.
 - **Light and dark themes** — a complete dark theme that follows the application's design tokens.
 
+## Screenshots
+
+### Asset Search
+![Asset search](./screenshots/query.png)
+
+### Query Hot Searches
+![Query hot searches](./screenshots/hot_search.png)
+
+### Host Profile
+![Host profile](./screenshots/host.png)
+
+### Aggregation Statistics
+![Aggregation statistics](./screenshots/stats.png)
+
+### Batch Export — Task List
+![Batch export task list](./screenshots/export_1.png)
+
+### Batch Export — New Task
+![Batch export new task](./screenshots/export_2.png)
+
+### Multi-key Management
+![Multi-key management](./screenshots/config.png)
+
 ## Downloads
 
 Download the latest release from the [Releases](https://github.com/polite-007/superfofa/releases/latest) page.
