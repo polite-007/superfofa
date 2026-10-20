@@ -1,0 +1,64 @@
+name: Sync source to public repo
+
+# Keeps the public repository (polite-007/superfofa) main branch in sync with
+# this private source repository. Runs on every push to main and can also be
+# triggered manually.
+#
+# Required secrets (already used by the release workflow):
+#   RELEASE_PAT  — PAT with repository write access to the public repo
+#   PUBLIC_REPO  — public repository name, e.g. polite-007/superfofa
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    # Prevent the copied workflow from running inside the public repository.
+    if: github.repository == 'polite-007/superfofa-src'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Sync source to public repository
+        env:
+          RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
+          PUBLIC_REPO: ${{ secrets.PUBLIC_REPO }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PUBLIC_REPO:-}" ]; then
+            echo "PUBLIC_REPO secret is not set"
+            exit 1
+          fi
+          if [ -z "${RELEASE_PAT:-}" ]; then
+            echo "RELEASE_PAT secret is not set"
+            exit 1
+          fi
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git clone --depth 1 "https://x-access-token:${RELEASE_PAT}@github.com/${PUBLIC_REPO}.git" public-repo
+
+          # Replace the public repo contents with the tracked source tree.
+          find public-repo -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          git archive HEAD | tar -x -C public-repo
+
+          # The public repository uses the English README.
+          cp README.public.md public-repo/README.md
+          rm -f public-repo/README.public.md
+
+          cd public-repo
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to sync"
+            exit 0
+          fi
+          git commit -m "chore: sync source from ${GITHUB_SHA::7}"
+          git push origin HEAD:main

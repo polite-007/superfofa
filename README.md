@@ -1,113 +1,145 @@
 # super-fofa
 
-> 高效的 FOFA API 桌面客户端 —— 查询、主机画像、聚合统计、批量导出、多 Key 管理于一体。
+A cross-platform desktop client for the [FOFA](https://fofa.info) cyberspace search engine. It brings querying, asset profiling, aggregation, batch export, and multi-key management into a fast, focused local application.
 
-基于 Wails v2 + React + shadcn-ui 构建的跨平台桌面应用，把 FOFA 的能力包装成一个顺手、快速、可视化的本地工具。
+[![Release](https://img.shields.io/github/v/release/polite-007/superfofa)](https://github.com/polite-007/superfofa/releases)
+[![Platforms](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-111)](https://github.com/polite-007/superfofa/releases)
+[![License](https://img.shields.io/github/license/polite-007/superfofa)](./LICENSE)
 
-## ✨ 特性
+## Overview
 
-- **资产搜索**：多标签页查询、字段预设、历史记录、分页、端口/主机联动、一键转导出，长查询自动等比放大
-- **查询热搜**：实现获取查询热搜，显示热搜详情，快速获取
-- **主机画像**：IPv4 主机画像查询，普通 / 详情双模式，仪表盘式布局（Hero 卡 + KPI + 端口卡片）
-- **聚合统计**：基于查询结果按字段聚合，多字段并行统计、TopN 可调、占比与计数一目了然，快速洞察资产分布
-- **批量导出**：多语法 / IP / host / domain 输入、字段选择、断点续传、暂停 / 重试、XLSX 输出
-- **多 Key 管理**：多账号管理、顺序轮询 / 单 Key / 多 Key 随机模式、BaseURL / 代理配置、账号联网检测
-- **自动更新**：应用内检查更新，下载 / 校验 / 安装 / 重启全流程可视化
-- **跨平台**：macOS（Intel / Apple Silicon）、Windows（x64 / ARM64）、Linux（x64 / ARM64）
-- **明暗主题**：手动切换，所有界面自适应
-- **离线友好**：本地 SQLite 持久化任务 / 账号 / 配置 / 查询历史
+super-fofa is built with Wails v2, React, TypeScript, and shadcn/ui. It wraps the FOFA APIs in a native desktop experience with local persistence and a consistent interface across macOS, Windows, and Linux.
 
-## 📦 下载安装
+## Features
 
-前往 [Releases](https://github.com/polite-007/superfofa/releases/latest) 下载对应平台的压缩包：
+- **Asset search** — multi-tab queries, field presets, query history, pagination, and direct links between hosts, ports, and exported data.
+- **Card and list views** — a single-column asset card view for analysis, with a configurable information panel and a left-side aggregation sidebar. Switch between card and list views without re-querying.
+- **Aggregation sidebar** — protocol, domain, title, country/region, and port distributions for the complete result set, including country-to-region drill-down and click-to-filter.
+- **Query hot search** — browse current FOFA hot searches, inspect their details, and run them with a single click.
+- **Host profile** — IPv4 host profiles in standard and detailed modes, presented as a dashboard with key indicators and port cards.
+- **Aggregation statistics** — aggregate results by field, with configurable Top N, counts, percentages, and parallel field queries.
+- **Batch export** — export from query syntax, IP, host, or domain inputs; select fields; pause, resume, and resume from checkpoints; write XLSX files.
+- **Multi-key management** — manage multiple FOFA accounts, with sequential, single-key, and multi-key random modes, custom API base URL, proxy support, and account connectivity checks.
+- **Membership-aware card fields** — choose the FOFA membership tier (Personal, Professional, Business, Enterprise); unsupported fields are locked so queries do not fail on field permissions.
+- **Automatic updates** — check for updates from within the application and follow download, verification, installation, and restart progress.
+- **Cross-platform** — macOS (Intel and Apple Silicon), Windows (x64 and ARM64), and Linux (x64 and ARM64).
+- **Local persistence** — SQLite stores accounts, configuration, export tasks, and query history locally.
+- **Light and dark themes** — a complete dark theme that follows the application's design tokens.
 
-| 平台 | 文件 |
-|---|---|
-| macOS（Apple Silicon） | `superfofa-macos-arm64.zip` |
-| macOS（Intel） | `superfofa-macos-amd64.zip` |
-| Windows（x64） | `superfofa-windows-amd64.zip` |
-| Windows（ARM64） | `superfofa-windows-arm64.zip` |
-| Linux（x64） | `superfofa-linux-amd64.tar.gz` |
-| Linux（ARM64） | `superfofa-linux-arm64.tar.gz` |
+## Downloads
 
-**macOS**：解压后把 `superfofa.app` 拖到「应用程序」文件夹。首次打开若被 Gatekeeper 拦截，右键 → 打开 一次即可。
+Download the latest release from the [Releases](https://github.com/polite-007/superfofa/releases/latest) page.
 
-**Windows**：解压后运行 `superfofa.exe`。若被 SmartScreen 拦截，点击「更多信息」→「仍要运行」。
+| Platform | Artifact |
+| --- | --- |
+| macOS (Apple Silicon) | `superfofa-macos-arm64.zip` |
+| macOS (Intel) | `superfofa-macos-amd64.zip` |
+| Windows (x64) | `superfofa-windows-amd64.zip` |
+| Windows (ARM64) | `superfofa-windows-arm64.zip` |
+| Linux (x64) | `superfofa-linux-amd64.tar.gz` |
+| Linux (ARM64) | `superfofa-linux-arm64.tar.gz` |
+| Source snapshot | `superfofa-source-<version>.tar.gz` / `.zip` |
 
-## 🖼 功能预览
+The full source code is available in this repository. Each release also includes a source snapshot and a `checksums.txt` file.
 
-> 截图位于 `screenshots/` 目录，可随版本更新替换。
+### Installation
 
-### 资产搜索
+- **macOS**: extract the archive and move `superfofa.app` to Applications. If Gatekeeper blocks the first launch, right-click the app and choose **Open**.
+- **Windows**: extract the archive and run `superfofa.exe`. If SmartScreen blocks it, choose **More info** → **Run anyway**.
+- **Linux**: extract the archive and run the `superfofa` binary.
 
-多标签页查询、字段预设、历史记录、分页、端口 / 主机 / 导出联动。
+## Quick Start
 
-![资产搜索](./screenshots/query.png)
+1. Open the application and go to **Configuration**.
+2. Add a FOFA account with its email and API key, then run the connectivity check.
+3. Open **Query**, enter a FOFA query, and run the search.
+4. Switch between the list and card views, inspect the aggregation sidebar, or export the result set.
 
-### 查询热搜
+A valid FOFA API key is required for all queries.
 
-实现获取查询热搜，显示热搜详情，快速获取
+## Build from Source
 
-![资产搜索](./screenshots/hot_search.png)
+### Prerequisites
 
-### 主机画像
+- Go 1.25 or newer
+- Node.js 22 or newer
+- [Wails v2 CLI](https://wails.io/docs/gettingstarted/installation)
 
-IPv4 主机画像查询，普通 / 详情双模式，仪表盘式布局。
+### Build
 
-![主机画像](./screenshots/host.png)
+```bash
+git clone https://github.com/polite-007/superfofa.git
+cd superfofa
 
-### 聚合统计
+cd frontend
+npm ci
+cd ..
 
-基于查询结果按字段聚合，多字段并行统计、TopN 可调、占比与计数一目了然。
+wails build
+```
 
-![聚合统计](./screenshots/stats.png)
+The resulting application is written to `build/bin`.
 
-### 批量导出
+### Development
 
-多输入源、字段选择、断点续传、暂停 / 恢复 / 重试，XLSX 输出。
+```bash
+wails dev
+```
 
-![批量导出-任务列表](./screenshots/export_1.png)
+The frontend can also be built independently:
 
-![批量导出-新建任务](./screenshots/export_2.png)
+```bash
+cd frontend
+npm run build
+```
 
-### 多 Key 管理
+## Tech Stack
 
-多账号管理、顺序 / 单 Key / 多 Key 模式、代理配置、联网检测。
+- **Desktop shell**: Wails v2
+- **Backend**: Go
+- **Frontend**: React 18, TypeScript, shadcn/ui, Tailwind CSS v4
+- **FOFA SDK**: [polite-007/toolbox](https://github.com/polite-007/toolbox)
+- **Storage**: SQLite, with SQLite-backed query and host history
 
-![多 Key 管理](./screenshots/config.png)
+## Project Structure
 
-## 🚀 快速开始
+```text
+.
+├── cmd/                # Auxiliary binaries, including the updater
+├── internal/           # Go application, store, models, logger
+│   ├── app/            # Wails-bound application services
+│   ├── model/          # Shared data models
+│   └── store/          # SQLite persistence
+├── frontend/           # React frontend
+│   └── src/
+│       ├── components/ # Shared UI components
+│       └── views/      # Query, host, aggregate, export, config, version
+├── build/              # Wails build assets
+└── .github/            # Release and source-sync workflows
+```
 
-1. 打开应用，进入「配置」页
-2. 点击「新增账号」，填入 FOFA Email + API Key，点击「检测」确认可用
-3. 回到「查询」页，输入 FOFA 语法开始搜索
-4. 在结果中点击 IP 跳转主机画像，或点击「导出」批量拉取数据
+## Contributing
 
-> 没有可用账号时，查询会自动跳转到配置页引导你添加。
+Issues and pull requests are welcome. Please include a clear description, reproduction steps, and the affected platform when reporting a problem.
 
-## 🛠 技术栈
+Before opening a pull request, make sure the frontend and backend build successfully:
 
-- **前端**：React 18 + TypeScript + shadcn-ui + Tailwind CSS v4
-- **后端**：Go 1.25 + Wails v2
-- **FOFA SDK**：[github.com/polite-007/toolbox/fofa](https://github.com/polite-007/toolbox)
-- **存储**：SQLite（账号 / 配置 / 导出任务）+ localStorage（查询历史）
+```bash
+cd frontend && npm run build
+cd .. && go build ./...
+```
 
-## 💡 使用提示
+## Security and Responsible Use
 
-- 详情模式（主机画像 `detail=true`）响应缓慢，常超时，请耐心等待
-- 多 Key 随机模式从有效账号池中随机选取，分散请求压力，适合大数据量场景
-- 查询语法与 FOFA 官方一致，支持 `&&`、`||`、字段过滤等
+super-fofa is intended for authorized security research, attack-surface management, and asset inventory work. Users are responsible for obtaining the necessary authorization and for complying with FOFA's terms of service and applicable laws. The maintainers are not responsible for misuse of the software or the data it retrieves.
 
-## 📝 更新日志
+## License
 
-每个版本的功能与改动见 [Releases](https://github.com/polite-007/superfofa/releases)，应用内标题栏点击「日志」图标也可查看。
+Released under the MIT License. See [LICENSE](./LICENSE) for details.
 
-## 📄 说明
+## Acknowledgements
 
-本仓库仅托管 README 与发布产物，源码暂未公开。如有建议或问题，欢迎通过 [Issues](https://github.com/polite-007/superfofa/issues) 反馈。
-
-## 🙏 致谢
-
-- [Wails](https://wails.io/) —— Go + Web 的桌面应用框架
-- [shadcn-ui](https://ui.shadcn.com/) —— 组件库
-- [polite-007/toolbox](https://github.com/polite-007/toolbox) —— FOFA Go SDK
+- [Wails](https://wails.io) — desktop application framework for Go and the web
+- [shadcn/ui](https://ui.shadcn.com) — UI components
+- [polite-007/toolbox](https://github.com/polite-007/toolbox) — Go SDK for FOFA
+- [FOFA](https://fofa.info) — cyberspace search engine

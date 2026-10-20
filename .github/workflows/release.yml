@@ -1,0 +1,185 @@
+name: Release
+
+# 在私有源码仓库中打 tag（如 v1.3.0）触发，
+# 在 macOS / Windows / Linux runner 上编译，然后把产物发布到「公开主页仓库」的 Release。
+#
+# 需要在本仓库 Secrets 配置：
+#   RELEASE_PAT  —— 有公开仓库 release 写权限的 Personal Access Token (classic, 勾选 repo)
+#   PUBLIC_REPO  —— 公开主页仓库全名，如 polite-007/superfofa
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.label }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: macos-amd64
+            runner: macos-latest
+            platform: darwin/amd64
+            goos: darwin
+            goarch: amd64
+            artifact: superfofa.app
+            updater: build/bin/superfofa.app/Contents/MacOS/superfofa-updater
+            archive: superfofa-macos-amd64.zip
+          - label: macos-arm64
+            runner: macos-latest
+            platform: darwin/arm64
+            goos: darwin
+            goarch: arm64
+            artifact: superfofa.app
+            updater: build/bin/superfofa.app/Contents/MacOS/superfofa-updater
+            archive: superfofa-macos-arm64.zip
+          - label: windows-amd64
+            runner: windows-latest
+            platform: windows/amd64
+            goos: windows
+            goarch: amd64
+            artifact: superfofa.exe
+            updater: build/bin/superfofa-updater.exe
+            archive: superfofa-windows-amd64.zip
+          - label: windows-arm64
+            runner: windows-latest
+            platform: windows/arm64
+            goos: windows
+            goarch: arm64
+            artifact: superfofa.exe
+            updater: build/bin/superfofa-updater.exe
+            archive: superfofa-windows-arm64.zip
+          - label: linux-amd64
+            runner: ubuntu-22.04
+            platform: linux/amd64
+            goos: linux
+            goarch: amd64
+            artifact: superfofa
+            updater: build/bin/superfofa-updater
+            archive: superfofa-linux-amd64.tar.gz
+          - label: linux-arm64
+            runner: ubuntu-22.04-arm
+            platform: linux/arm64
+            goos: linux
+            goarch: arm64
+            artifact: superfofa
+            updater: build/bin/superfofa-updater
+            archive: superfofa-linux-arm64.tar.gz
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+          cache: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Linux GUI deps
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev pkg-config
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          wails build -platform ${{ matrix.platform }} -clean -ldflags "-X 'myproject/internal/app.Version=${VERSION}'"
+
+      - name: Build updater
+        shell: bash
+        run: |
+          GOOS="${{ matrix.goos }}" GOARCH="${{ matrix.goarch }}" go build -o "${{ matrix.updater }}" ./cmd/updater
+
+      - name: Archive (macOS)
+        if: runner.os == 'macOS'
+        working-directory: build/bin
+        run: zip -r -y "../../${{ matrix.archive }}" "${{ matrix.artifact }}"
+
+      - name: Archive (Windows)
+        if: runner.os == 'Windows'
+        working-directory: build/bin
+        shell: pwsh
+        run: Compress-Archive -Path "${{ matrix.artifact }}", "superfofa-updater.exe" -DestinationPath "../../${{ matrix.archive }}" -Force
+
+      - name: Archive (Linux)
+        if: runner.os == 'Linux'
+        working-directory: build/bin
+        run: tar -czf "../../${{ matrix.archive }}" "${{ matrix.artifact }}" "superfofa-updater"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.archive }}
+          path: ${{ matrix.archive }}
+
+  release:
+    name: Publish to public repo
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source (for source archive + release notes)
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Archive source
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          git archive --format=tar.gz --prefix="superfofa-${VERSION}/" -o "superfofa-source-${VERSION}.tar.gz" HEAD
+          git archive --format=zip --prefix="superfofa-${VERSION}/" -o "superfofa-source-${VERSION}.zip" HEAD
+
+      - name: Compute checksums
+        run: sha256sum superfofa-* > checksums.txt
+
+      - name: Compute public tag (strip leading v)
+        id: tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "name=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "notes=release-notes/${VERSION}.md" >> "$GITHUB_OUTPUT"
+
+      - name: Create Release on public repo
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.RELEASE_PAT }}
+          repository: ${{ secrets.PUBLIC_REPO }}
+          tag_name: ${{ steps.tag.outputs.name }}
+          name: ${{ steps.tag.outputs.name }}
+          body_path: ${{ steps.tag.outputs.notes }}
+          files: |
+            superfofa-macos-amd64.zip
+            superfofa-macos-arm64.zip
+            superfofa-windows-amd64.zip
+            superfofa-windows-arm64.zip
+            superfofa-linux-amd64.tar.gz
+            superfofa-linux-arm64.tar.gz
+            superfofa-source-*.tar.gz
+            superfofa-source-*.zip
+            checksums.txt
