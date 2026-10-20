@@ -1,3 +1,5 @@
+**English** | [简体中文](README_ZH.md)
+
 # super-fofa
 
 A cross-platform desktop client for the [FOFA](https://fofa.info) cyberspace search engine. It brings querying, asset profiling, aggregation, batch export, and multi-key management into a fast, focused local application.
